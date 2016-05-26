@@ -2,7 +2,12 @@
 'use strict';
 
 
-// http://api.followthemoney.org/?c-t-id=173751&gro=d-eid,d-ccg,d-ccb,d-ad-st&APIKey=ed54edffda789c556c68786a42e43841&mode=json
+http://api.followthemoney.org/?c-t-id=173751&gro=d-eid,d-ccg,d-ccb,d-ad-st&APIKey=ed54edffda789c556c68786a42e43841&mode=json
+
+if (coffmanData.paging.currentPage < object.maxPage) {
+  run ajax request again
+  with page = currentPage + 1
+}
 
 
 //
