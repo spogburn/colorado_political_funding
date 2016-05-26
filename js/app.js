@@ -28,6 +28,7 @@ function ajax(method, url, handler, data) {
 }
 
 //VARIABLE DECLARATIONS//
+
 var polData; // object to hold data returned from year AJAX
 var fundingDataArr = []; // array to hold data returned from funding AJAX
 var sectorObj = {}; // object to hold chart data
@@ -42,6 +43,7 @@ for (var i = 0; i < fundingHeaders.length; i++){ // loop that makes object with 
 var resultsDiv = document.getElementById('results');
 // var canvasElement = document.querySelector('#chart_canvas')
 var canvasContainer= document.querySelector('.canvas_container'); // gets canvas_container div
+var donationsDiv = document.querySelector('.donations');
 var button = document.querySelector('button'); // gets button
 var loadingImage = document.createElement('img'); // creates element for loading image
 loadingImage.setAttribute('src', '../images/loading.gif'); // gives source to loading image
@@ -52,8 +54,11 @@ button.addEventListener('click', function(ev){ // adds event listener to politic
     ev.preventDefault();
     fundingDataArr = [];
     button.disabled = true;
-    resultsDiv.innerHTML = '';
+    selectPol.disabled = true;
+    selectYear.disabled = true;
+    donationsDiv.innerHTML = '';
     canvasContainer.innerHTML = '';
+    resultsDiv.innerHTML = '';
     canvasContainer.appendChild(loadingImage);
     for (var i = 0; i < polData.records.length; i++){
       if (selectPol.value === polData.records[i].Candidate.Candidate){
@@ -75,10 +80,9 @@ button.addEventListener('click', function(ev){ // adds event listener to politic
             if (count === pagesWanted){
               canvasContainer.removeChild(loadingImage);
               button.disabled = false;
-              // fundingData = data;
-              // console.log('fundingData');
-              // console.log(fundingData);
-
+              selectPol.disabled = false;
+              selectYear.disabled = false;
+                insertDonations();
                 makeCanvas();
                 makeSectorChart();
                 makeTable();
@@ -94,12 +98,14 @@ button.addEventListener('click', function(ev){ // adds event listener to politic
 selectYear.addEventListener('change', function(event){ // adds event listener to year to do AJAX request
   selectPol.innerHTML = '';
   selectPol.disabled = true;
+  button.disabled = true;
   var year = event.target.value;
   ajax('GET', 'http://api.followthemoney.org/?s=CO&y=' + year + '&f-core=1&f-fc=1&gro=c-t-id&APIKey=afab15a9307986c9452f83dea887244b&mode=json', function(err, data){
     polData = data;
     // console.log(polData);
 
     for (var i = 0; i < polData.records.length; i++){
+          button.disabled = false;
           selectPol.disabled = false;
            if (polData.records[i].Election_Status.Election_Status === 'Won-General'){
                var option = document.createElement('option');
@@ -110,7 +116,6 @@ selectYear.addEventListener('change', function(event){ // adds event listener to
            }
          });
 });
-
 
   function makeTable(){ // makes a table
     var table = document.createElement('table'); // creates a table
@@ -172,7 +177,7 @@ var colorArr = ['rgb(158, 178, 215)', 'rgb(121, 129, 142)', 'rgb(53, 60, 72)', '
 
 var hoverColorArr =  ['rgba(158, 178, 215, .5)', 'rgba(121, 129, 142, .5)', 'rgba(53, 60, 72, .5)', 'rgba(26, 34, 49, .5)', 'rgba(206, 189, 162, .5)', 'rgba(211, 213, 179, .5)', 'rgba(107, 108, 76, .5)', 'rgba(72, 74, 35, .5)', 'rgba(234, 231, 238, .5)', 'rgba(143, 134, 155, .5)', 'rgba(52, 45, 61, .5)', 'rgba(41, 24, 64, .5)', 'rgba(206, 200, 187, .5)', 'rgba(202, 184, 150, .5)', 'rgba(88, 77, 55, .5)', 'rgba(70, 55, 28, .7)']
 
-function makeSectorData(){
+function makeSectorData(){ // makes the object with the sector data for the chart
   var data = {};
   var sectorLabels =[];
   var sectorTotalArr = [];
@@ -183,10 +188,10 @@ function makeSectorData(){
             'hoverBackgroundColor': hoverColorArr
             }];
 
-          makeSectorObj();
-        for (var key in sectorObj){
+        makeSectorObj();
+        for (var key in sectorObj){ // pushes keys to array
           sectorLabels.push(key);
-          sectorTotalArr.push(sectorObj[key].toFixed(2));
+          sectorTotalArr.push(sectorObj[key].toFixed(2)); // pushes values to array limits decimals to two
         }
       // console.log(sectorLabels);
       // console.log(sectorTotalArr);
@@ -196,7 +201,7 @@ function makeSectorData(){
       return data;
   }
 
-  function makeSectorChart(){
+  function makeSectorChart(){ // makes the by sector chart
     var chartCanvas = document.getElementById('ctx');
     var heading = document.createElement('h3');
     canvasContainer.insertBefore(heading, canvasContainer.children[0]);
@@ -214,9 +219,9 @@ function makeSectorData(){
         tooltips: {
           mode: 'label',
           bodyFontSize: 16,
-          backgroundColor: 'rgba(99,99,99, .5)',
+          backgroundColor: 'rgba(0,0,0, .8)',
           bodyFontFamily: "'Roboto Slab', 'serif'",
-          ypadding: 10,
+          ypadding: 5,
           callbacks: {
             label: function(tooltipItem, data){
               // console.log(tooltipItem);
@@ -243,50 +248,16 @@ function makeCanvas(){
   canvasContainer.appendChild(canvasElement);
 }
 
-// function makeChart(){
-  // var chartCanvas = document.getElementById('ctx');
-  // var heading = document.createElement('h3');
-  // canvasContainer.insertBefore(heading, canvasContainer.children[0]);
-  // heading.innerHTML = "Top Five Donors To " + selectPol.value;
-//
-//
-//   new Chart(chartCanvas, {
-//     type: 'bar',
-//     data: makeDonorData(),
-//     options: {
-//       fullWidth: false,
-//       barWidth: 10,
-//       responsive: true,
-//       legend: {
-//         display: false
-//       },
-//       labels:{
-//         fontSize: 4
-//       },
-//       scales: {
-//         xAxes: [{
-//                 categoryPercentage: 1,
-//                 barPercentage: 0.7,
-//                 categorySpacing: 0.1,
-//                 // showGridLines: false // not working
-//         }],
-//         yAxes: [{
-//                 display: true,
-//                 scaleLabel: {
-//                   display:true,
-//                   labelString: "Dollars Donated"
-//                 },
-//                 ticks: {
-//                   suggestedMin: 0
-//                   // beginatZero:true
-//                 }
-//         }]
-//     }
-//   }
-// });
-// }
-//
-//
+function topDonations(){ // adds up the top donations returned by the first five pages
+  var total = 0;
+  for (var i = 0; i < fundingDataArr.length; i++){
+     total += Number(fundingDataArr[i].Total_$.Total_$);
+  }
+  return total;
+}
 
-
-    //  td.innerHTML = fundingDataArr[i].Total_$.Total_$;
+function insertDonations(){ // puts donations in the DOM
+  var donationHeader = document.createElement('h2');
+  donationHeader.innerHTML = "The top " + fundingDataArr.length + " donations to " + selectPol.value + " in " + selectYear.value + " totalled: $" +  topDonations().toLocaleString();
+  donationsDiv.appendChild(donationHeader);
+}
