@@ -43,12 +43,6 @@ var resultsDiv = document.getElementById('results');
 var canvasContainer= document.querySelector('.canvas_container')
 var button = document.querySelector('button');
 
-// button.addEventListener(click, displayData)
-
-
-
-
-
 button.addEventListener('click', function(ev){ // adds event listener to politician select
     ev.preventDefault();
     button.disabled = true;
@@ -62,17 +56,14 @@ button.addEventListener('click', function(ev){ // adds event listener to politic
         console.log(fundingData);
         resultsDiv.innerHTML = '';
           makeCanvas();
-          // makeChart();
           makeTable();
-          // makeSectorObj();
-          // makeSectorData();
           makeSectorChart();
         }); // end of ajax function
       }
     }
   });
 
-selectYear.addEventListener('change', function(){
+selectYear.addEventListener('change', function(event){
   selectPol.innerHTML = '';
   if (event.target.value === 'placeholder'){
     var placeholder = document.createElement('option');
@@ -99,7 +90,7 @@ selectYear.addEventListener('change', function(){
     var table = document.createElement('table'); // creates a table
     table.setAttribute('class', 'funding_table'); // gives the table a class
     table.appendChild(makeHeaders(fundingHeadersObj)); // calls makeHeaders function and appends results to table
-    for (var i = 0; i < 5; i++){
+    for (var i = 0; i < 10; i++){
       var tr = table.insertRow(-1); // creates 20 rows
       for (var j = 0; j < fundingHeaders.length; j++){
         var td = tr.insertCell(-1); // creates cells for each row
@@ -112,7 +103,10 @@ selectYear.addEventListener('change', function(){
       }
       table.appendChild(tr); //adds the row to the table
     }
-
+var tableTitle = document.createElement('h2');
+tableTitle.setAttribute('class', 'text-center');
+tableTitle.innerHTML = 'Top 10 Contributors to ' + selectPol.value;
+resultsDiv.appendChild(tableTitle);
 resultsDiv.appendChild(table); // adds the table to the resultsDiv
 }
 
@@ -142,6 +136,9 @@ function makeSectorObj(){
   return sectorObj;
 }
 
+var colorArr = ['rgb(158, 178, 215)', 'rgb(121, 129, 142)', 'rgb(53, 60, 72)', 'rgb(26, 34, 49)', 'rgb(253, 254, 238)', 'rgb(211, 213, 179)', 'rgb(107, 108, 76)', 'rgb(72, 74, 35)', 'rgb(234, 231, 238)', 'rgb(143, 134, 155)', 'rgb(52, 45, 61)', 'rgb(41, 24, 64)', 'rgb(255, 252, 247)', 'rgb(202, 184, 150)', 'rgb(88, 77, 55)', 'rgb(70, 55, 28)']
+
+var hoverColorArr =  ['rgba(158, 178, 215, .5)', 'rgba(121, 129, 142, .5)', 'rgba(53, 60, 72, .5)', 'rgba(26, 34, 49, .5)', 'rgba(253, 254, 238, .5)', 'rgba(211, 213, 179, .5)', 'rgba(107, 108, 76, .5)', 'rgba(72, 74, 35, .5)', 'rgba(234, 231, 238, .5)', 'rgba(143, 134, 155, .5)', 'rgba(52, 45, 61, .5)', 'rgba(41, 24, 64, .5)', 'rgba(255, 252, 247, .5)', 'rgba(202, 184, 150, .5)', 'rgba(88, 77, 55, .5)', 'rgba(70, 55, 28, .7)']
 
 function makeSectorData(){
   var data = {};
@@ -150,43 +147,8 @@ function makeSectorData(){
   var datasetsArr = [{
             'label': 'Dollars Donated',
             'borderWidth': 0,
-            'backgroundColor': [
-              'rgb(34,173,242)',
-              'rgb(121,145,152)',
-              'rgb(63,93,99)',
-              'rgb(21,53,53)',
-              'rgb(34,173,242)',
-              'rgb(121,145,152)',
-              'rgb(63,93,99)',
-              'rgb(21,53,53)',
-              'rgb(34,173,242)',
-              'rgb(121,145,152)',
-              'rgb(63,93,99)',
-              'rgb(21,53,53)',
-              'rgb(34,173,242)',
-              'rgb(121,145,152)',
-              'rgb(63,93,99)',
-              'rgb(21,53,53)'
-
-            ],
-            'hoverBackgroundColor': [
-                  'rgba(34,173,242, 0.8)',
-                  'rgba(121,145,152, 0.8)',
-                  'rgba(63,93,99, 0.8)',
-                  'rgba(21,53,53, 0.8)',
-                  'rgba(34,173,242, 0.8)',
-                  'rgba(121,145,152, 0.8)',
-                  'rgba(63,93,99, 0.8)',
-                  'rgba(21,53,53, 0.8)',
-                  'rgba(34,173,242, 0.8)',
-                  'rgba(121,145,152, 0.8)',
-                  'rgba(63,93,99, 0.8)',
-                  'rgba(21,53,53, 0.8)',
-                  'rgba(34,173,242, 0.8)',
-                  'rgba(121,145,152, 0.8)',
-                  'rgba(63,93,99, 0.8)',
-                  'rgba(21,53,53, 0.8)'
-                ]
+            'backgroundColor': colorArr,
+            'hoverBackgroundColor': hoverColorArr
             }];
 
           makeSectorObj();
@@ -206,6 +168,7 @@ function makeSectorData(){
     var chartCanvas = document.getElementById('ctx');
     var heading = document.createElement('h3');
     canvasContainer.insertBefore(heading, canvasContainer.children[0]);
+    heading.setAttribute('class','text-center');
     heading.innerHTML = "Donations by Economic Sector to " + selectPol.value;
     new Chart(chartCanvas, {
       type: 'doughnut',
@@ -218,10 +181,7 @@ function makeSectorData(){
         },
         tooltips: {
           mode: 'label',
-          titleFontSize: 16,
-          label: {
-            titleFontSize: 16
-          },
+          fontSize: 20,
           callbacks: {
             label: function(tooltipItem, data){
               console.log(tooltipItem);

@@ -23,7 +23,9 @@ button {
   height: 50px;
 }
 
-
+.form_container {
+  margin-bottom: 30px;
+}
 .main_input{
   background-color: rgba(213,222,234, 0.8);
   display: block;
@@ -33,7 +35,7 @@ button {
 }
 
 #ctx{
-  margin-top: 40px;
+  margin: 10px 0 80px 0;
   /*width: 600px;
   height: 400px;*/
 }
@@ -47,13 +49,13 @@ button {
 
 table {
   padding: 6px 8px;
-  background-color: rgba(156,165,164, 0.8);
-  margin: 20px 5px;
+  background-color: rgba(158, 178, 215, 0.8);
+  margin: 40px 5px;
   border-radius: 20px;
 }
 
 table tr:nth-child(even){
-  background-color: rgb(99,99,99);
+  background-color: rgba(121, 129, 142, .8);
   color: #fff;
 }
 /*
