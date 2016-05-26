@@ -29,11 +29,12 @@ function ajax(method, url, handler, data) {
 
 //VARIABLE DECLARATIONS//
 var polData;
+var fundingDataArr = [];
 var fundingData;
 var selectPol = document.querySelector('.pol-name');
 var selectYear = document.querySelector('.year')
 var fundingHeaders = ['Contributor', 'State', 'Broad_Sector', 'Specific_Business', 'Total_$']; // header names from FollowTheMoney
-var fundingGoodNames = ['Donor', 'State', 'Economic Sector', 'Business', 'Amount Donated']; // header names I want
+var fundingGoodNames = ['Donor', 'State', 'Sector', 'Business', 'Dollars Contributed']; // header names I want
 var fundingHeadersObj = {}; // object to hold both header names
 for (var i = 0; i < fundingHeaders.length; i++){ // loop that makes object with both header names
   fundingHeadersObj[fundingHeaders[i]] = fundingGoodNames[i];
@@ -43,22 +44,47 @@ var resultsDiv = document.getElementById('results');
 var canvasContainer= document.querySelector('.canvas_container')
 var button = document.querySelector('button');
 
+
 button.addEventListener('click', function(ev){ // adds event listener to politician select
     ev.preventDefault();
+    fundingDataArr = [];
     button.disabled = true;
+    resultsDiv.innerHTML = '';
+    canvasContainer.innerHTML = '';
     for (var i = 0; i < polData.records.length; i++){
       if (selectPol.value === polData.records[i].Candidate.Candidate){
         // console.log('in loop')
         var id = polData.records[i].Candidate.id;
-        ajax('GET', 'http://api.followthemoney.org/?f-core=1&f-fc=1&c-t-id=' + id + '&gro=d-eid,d-ccg,d-ccb,d-ad-st&APIKey=afab15a9307986c9452f83dea887244b&mode=json', function(err, data){
-        button.disabled = false;
-        fundingData = data;
-        console.log(fundingData);
-        resultsDiv.innerHTML = '';
-          makeCanvas();
-          makeTable();
-          makeSectorChart();
-        }); // end of ajax function
+        ajax('GET', 'http://api.followthemoney.org/?f-core=1&f-fc=1&c-t-id=' + id + '&p=0&gro=d-eid,d-ccg,d-ccb,d-ad-st&APIKey=afab15a9307986c9452f83dea887244b&mode=json', function(pageerror, pagedata){
+          for (var l = 0; l < pagedata.records.length; l++){ //pushes data from first page into array
+            fundingDataArr.push(pagedata.records[l]);
+          }
+          console.log('first data Arr');
+          console.log(fundingDataArr[105]);
+        var pagesWanted = 5;
+        var count = 1;
+        for (var j = 1; j < pagesWanted; j++){
+          ajax('GET', 'http://api.followthemoney.org/?f-core=1&f-fc=1&c-t-id=' + id + '&p=' + j + '&gro=d-eid,d-ccg,d-ccb,d-ad-st&APIKey=afab15a9307986c9452f83dea887244b&mode=json', function(err, data){
+            console.log('second page of data');
+            console.log(data);
+            for (var k = 0; k < data.records.length; k++){
+              fundingDataArr.push(data.records[k]);
+            }
+            count++; // this is to check where we are in the number of requests returning
+            if (count === pagesWanted){
+              button.disabled = false;
+              // fundingData = data;
+              // console.log('fundingData');
+              // console.log(fundingData);
+
+                makeCanvas();
+                makeSectorChart();
+                makeTable();
+            }
+          });
+        }
+
+      });
       }
     }
   });
@@ -73,7 +99,7 @@ selectYear.addEventListener('change', function(event){
   var year = event.target.value;
   ajax('GET', 'http://api.followthemoney.org/?s=CO&y=' + year + '&f-core=1&f-fc=1&gro=c-t-id&APIKey=afab15a9307986c9452f83dea887244b&mode=json', function(err, data){
     polData = data;
-    console.log(polData);
+    // console.log(polData);
     for (var i = 0; i < polData.records.length; i++){
            if (polData.records[i].Election_Status.Election_Status === 'Won-General'){
                var option = document.createElement('option');
@@ -95,9 +121,9 @@ selectYear.addEventListener('change', function(event){
       for (var j = 0; j < fundingHeaders.length; j++){
         var td = tr.insertCell(-1); // creates cells for each row
         td.setAttribute('class', 'table_cell'); // sets a class to the td
-        td.innerHTML = fundingData.records[i][fundingHeaders[j]][fundingHeaders[j]]; // puts the data into each table cell
-        // console.log(fundingData.records[i][fundingHeaders[j]]);
-          if(fundingData.records[i][fundingHeaders[j]].Total_$){
+        td.innerHTML = fundingDataArr[i][fundingHeaders[j]][fundingHeaders[j]]; // puts the data into each table cell
+        // console.log(fundingDataArr[i][fundingHeaders[j]]);
+          if(fundingDataArr[i][fundingHeaders[j]].Total_$){
             td.innerHTML = "$" + td.innerHTML;
           }
       }
@@ -122,15 +148,19 @@ function makeHeaders(obj){ // makes the table headers
 
 var sectorObj = {};
 function makeSectorObj(){
-  console.log('funding data');
-  console.log(fundingData);
-  for (var i = 0; i < fundingData.records.length; i++){ // loop through the returned object
-    if(sectorObj.hasOwnProperty(fundingData.records[i].Broad_Sector.Broad_Sector)) { // if it has that property
-      sectorObj[fundingData.records[i].Broad_Sector.Broad_Sector]  +=  Number(fundingData.records[i].Total_$.Total_$); // make that the key and make the value the total $
-    }
+  console.log('fundingdataArr');
+  console.log(fundingDataArr);
+  for (var i = 0; i < fundingDataArr.length; i++){ // loop through the returned object
+    if (fundingDataArr[i] === 'No Records') {
+      i += i;
+      }
 
     else {
-      sectorObj[fundingData.records[i].Broad_Sector.Broad_Sector] = Number(fundingData.records[i].Total_$.Total_$); // otherwise make the key value pair
+      if(sectorObj.hasOwnProperty(fundingDataArr[i].Broad_Sector.Broad_Sector)) { // if it has that property
+      sectorObj[fundingDataArr[i].Broad_Sector.Broad_Sector]  +=  Number(fundingDataArr[i].Total_$.Total_$); // make that the key and make the value the total $
+    } else {
+      sectorObj[fundingDataArr[i].Broad_Sector.Broad_Sector] = Number(fundingDataArr[i].Total_$.Total_$); // otherwise make the key value pair
+    }
     }
   }
   return sectorObj;
@@ -156,8 +186,8 @@ function makeSectorData(){
           sectorLabels.push(key);
           sectorTotalArr.push(sectorObj[key].toFixed(2));
         }
-      console.log(sectorLabels);
-      console.log(sectorTotalArr);
+      // console.log(sectorLabels);
+      // console.log(sectorTotalArr);
       data.labels = sectorLabels;
       datasetsArr[0].data = sectorTotalArr;
       data.datasets = datasetsArr;
@@ -184,10 +214,10 @@ function makeSectorData(){
           fontSize: 20,
           callbacks: {
             label: function(tooltipItem, data){
-              console.log(tooltipItem);
-              console.log(data);
-              console.log(data.labels[tooltipItem.index]);
-              console.log(data.datasets[0].data[tooltipItem.index]);
+              // console.log(tooltipItem);
+              // console.log(data);
+              // console.log(data.labels[tooltipItem.index]);
+              // console.log(data.datasets[0].data[tooltipItem.index]);
               return data.labels[tooltipItem.index] + ': $' + data.datasets[0].data[tooltipItem.index];
             }
           }
@@ -273,8 +303,8 @@ function makeSectorData(){
 //             'hoverBorderColor': "rgba(99,99,99,1)",
 //           }];
 //   for (var i = 0; i < 5; i++){
-//     donorLabels.push(fundingData.records[i].Contributor.Contributor);
-//     totalAmountArr.push(fundingData.records[i].Total_$.Total_$);
+//     donorLabels.push(fundingDataArr[i].Contributor.Contributor);
+//     totalAmountArr.push(fundingDataArr[i].Total_$.Total_$);
 //   }
 //   data.labels = donorLabels;
 //   datasetsArr[0].data = totalAmountArr;
@@ -337,4 +367,4 @@ function makeCanvas(){
 //
 
 
-    //  td.innerHTML = fundingData.records[i].Total_$.Total_$;
+    //  td.innerHTML = fundingDataArr[i].Total_$.Total_$;
