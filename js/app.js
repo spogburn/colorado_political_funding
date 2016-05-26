@@ -157,6 +157,7 @@ function makeHeaders(obj){ // makes the table headers
 function makeSectorObj(){
   // console.log('fundingdataArr');
   // console.log(fundingDataArr);
+  sectorObj = {};
   for (var i = 0; i < fundingDataArr.length; i++){ // loop through the returned object
     if (fundingDataArr[i] === 'No Records') {
       i += i;
@@ -251,7 +252,17 @@ function makeCanvas(){
 function topDonations(){ // adds up the top donations returned by the first five pages
   var total = 0;
   for (var i = 0; i < fundingDataArr.length; i++){
+   if (fundingDataArr[i] === 'No Records') {
+     i += i;
+   }
+   else {
      total += Number(fundingDataArr[i].Total_$.Total_$);
+   }
+  //  console.log('-----');
+  //  console.log(fundingDataArr);
+  //   console.log(fundingDataArr[i]);
+  //   console.log('-----');
+
   }
   return total;
 }
