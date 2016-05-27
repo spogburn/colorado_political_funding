@@ -55,13 +55,17 @@ a {
 
 }
 
+
 .about {
-  margin-top: 20px;
+  margin-top: 10px;
+  color: rgb(125, 128, 134);
+  padding: 5px 20%;
 
 }
 .intro {
-  color: rgb(156,165,164)
+  color: rgb(125, 128, 134);
 }
+
 .spacer {
   height: 50px;
 }
@@ -93,6 +97,7 @@ a {
   left:0;
   width:100%;
 }
+
 
 table {
   padding: 6px 8px;
