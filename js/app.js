@@ -46,7 +46,7 @@ var canvasContainer= document.querySelector('.canvas_container'); // gets canvas
 var donationsDiv = document.querySelector('.donations');
 var button = document.querySelector('button'); // gets button
 var loadingImage = document.createElement('img'); // creates element for loading image
-loadingImage.setAttribute('src', '/images/loading.gif'); // gives source to loading image
+loadingImage.setAttribute('src', 'images/loading.gif'); // gives source to loading image
 loadingImage.style.marginTop = '50px';
 loadingImage.style.marginLeft = '35%';
 
