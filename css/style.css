@@ -32,15 +32,18 @@ a {
   height: 100%;
 }
 
-.navbar-nav>li>a {
-    padding-top: 15px;
-    padding-bottom: 0;
-  }
+.navbar-nav {
+      height: 50px;
+    }
 
-  .navbar-nav {
+.navbar-nav>li {
       height: 100%;
     }
 
+.navbar-nav>li>a {
+        padding-top: 15px;
+        padding-bottom: 0;
+      }
 
 
 .btn {
