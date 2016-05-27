@@ -60,6 +60,12 @@ button.addEventListener('click', function(ev){ // adds event listener to politic
     canvasContainer.innerHTML = '';
     resultsDiv.innerHTML = '';
     canvasContainer.appendChild(loadingImage);
+    // Make the element fully transparent.
+    loadingImage.style.opacity = 0;
+    // Make sure the initial state is applied.
+    window.getComputedStyle(loadingImage).opacity;
+    // Fade it in.
+    loadingImage.style.opacity = 1;
     for (var i = 0; i < polData.records.length; i++){
       if (selectPol.value === polData.records[i].Candidate.Candidate){
         // console.log('in loop')
@@ -215,14 +221,18 @@ function makeSectorData(){ // makes the object with the sector data for the char
         fullWidth: false,
         responsive: true,
         legend: {
-          display: true
+          position: 'bottom',
+          display: true,
+          labels: {
+            fontSize: 14,
+            padding: 15
+          }
         },
         tooltips: {
           mode: 'label',
           bodyFontSize: 16,
           backgroundColor: 'rgba(0,0,0, .8)',
           bodyFontFamily: "'Roboto Slab', 'serif'",
-          ypadding: 5,
           callbacks: {
             label: function(tooltipItem, data){
               // console.log(tooltipItem);

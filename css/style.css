@@ -12,12 +12,49 @@ h2 {
   font-size: 2.5em;
 }
 
+.navbar {
+  background-color: rgb(211, 214, 219);
+  color: rgb(0,0,0);
+  font-size: 1.1em;
+
+}
+
+.navbar-collapse ul a {
+  color: rgb(0,0,0);
+  hover: rgb(211, 214, 219);
+}
+
+
+ul {
+  height: 100%;
+}
+
+a {
+  height: 100%;
+}
+
+.navbar-nav>li>a {
+    padding-top: 15px;
+    padding-bottom: 0;
+  }
+
+  .navbar-nav {
+      height: 100%;
+    }
+
+
+
 .btn {
-  background-color: rgba(121, 129, 142, .3);
+  background-color: rgb(187, 190, 200);
   /*margin-top: 16px;*/
   width: 100%;
   border-radius: 7px;
   border: 1px solid rgba(121, 129, 142, .3);
+
+}
+
+.about {
+  margin-top: 20px;
 
 }
 .intro {
@@ -28,15 +65,15 @@ h2 {
 }
 
 .donations {
-  margin-top: 40px;
-  margin-bottom: 40px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 .form_container {
   margin-bottom: 30px;
 }
 
 .main_input{
-  background-color: rgba(213,222,234, 0.3);
+  background-color: rgba(213,222,234, 0.5);
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -44,7 +81,7 @@ h2 {
 }
 
 #ctx{
-  margin: 10px 0 80px 0;
+  margin: 10px 0 40px 0;
 }
 
 .bg_img{
